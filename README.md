@@ -65,3 +65,31 @@ else
 ```
 
 This is just a quick example of how you can format the data in PHP. 
+
+
+You can also get the tweet date. To use, you need: `$tweet['created']` but it is unformatted. 
+
+Here's an example of how you could format it:
+
+```
+$diff = time_passed(strtotime($tweet['created']), strtotime('now'));
+$units = 0;
+$created_at = array();
+foreach($diff as $unit => $value)
+{
+	if($value != 0 && $units < 1)
+	{
+		if($value === 1)
+		{
+			#let's remove the plural "s"
+			$unit = substr($unit, 0, -1);
+		}
+		$created_at[]= $value . ' ' .$unit;
+		++$units;		
+	}
+}
+$created_at = implode(', ',$created_at);
+$created_at .= ' ago';
+```
+
+Thanks!
