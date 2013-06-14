@@ -1,7 +1,7 @@
 twitter-api-php-cache
 =====================
 
-PHP class to get latest tweets and store in cache
+PHP class to get latest tweets and store in cache. Compatible with version 1.1 of the Twitter API. Sign up for a Developer account on Twitter to get you own access tokens (required.)
 
 
 
