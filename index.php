@@ -49,6 +49,9 @@ body {
 	max-width: 620px;
 	margin: 0 auto;
 }
+.demo li {
+	margin-bottom: 1em;
+}
 
 </style>
 

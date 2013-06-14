@@ -5,10 +5,7 @@ PHP class to get latest tweets and store in cache
 
 
 
-How To Use
-----------
-
-#### Configure the class file
+## Configure the class file
 
 ```
 // Set your Twitter username
@@ -31,23 +28,22 @@ private $consumer_secret = "YOUR_CONSUMER_SECRET";
 
 ```
 
-#### Include the class file
+Don't forgot to create a cache folder and set proper permissions.
+
+
+
+## How To Use
 
 ```
+
+// Include the class file
 require_once('twitter.php');
-```
 
-#### Get the tweets
-
-```
+//Get the tweets
 $twitter = new Twitter();
 $tweets = $twitter->getTweets();
-```
 
 
-The data is returned in an array. Now you can format the data in PHP. Here's an example:
-
-```
 if(is_array($tweets))
 {
 	echo '<ul class="tweets">';
@@ -67,3 +63,5 @@ else
 }
 
 ```
+
+This is just a quick example of how you can format the data in PHP. 
