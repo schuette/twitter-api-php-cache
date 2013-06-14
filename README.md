@@ -34,7 +34,7 @@ private $consumer_secret = "YOUR_CONSUMER_SECRET";
 #### Include the class file
 
 ```
-require_once('includes/twitter.php');
+require_once('twitter.php');
 ```
 
 #### Get the tweets
