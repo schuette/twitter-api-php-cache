@@ -5,7 +5,7 @@ PHP class to get latest tweets and store in cache
 
 
 
-## Configure the class file
+## Configure twitter.php
 
 ```
 // Set your Twitter username
@@ -32,7 +32,7 @@ Don't forgot to create a cache folder and set proper permissions.
 
 
 
-## How To Use
+## Usage
 
 ```
 
