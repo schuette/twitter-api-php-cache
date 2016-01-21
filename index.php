@@ -73,20 +73,34 @@ $tweets = $twitter->getTweets();
 
 if(is_array($tweets))
 {
-    echo '<ul class="tweets">';
-    foreach($tweets as $tweet) {
-        $text = $tweet['text'];
-        $text = preg_replace("#(^|[\n ])@([^ \"\t\n\r<]*)#ise", "'\\1<a href=\"http://www.twitter.com/\\2\">@\\2</a>'", $text);
-        $text = preg_replace("#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)#ise", "'\\1<a href=\"\\2\">\\2</a>'", $text);
-        $text = preg_replace("#(^|[\n ])((www|ftp)\.[^ \"\t\n\r<]*)#ise", "'\\1<a href=\"http://\\2\">\\2</a>'", $text);
-        $text = preg_replace('/([^a-zA-Z0-9-_&])#([0-9a-zA-Z_]+)/',"$1<a href=\"http://twitter.com/search?q=%23$2\">#$2</a>",$text);
-        echo '<li>'.$text.'</li>';
-    }
-    echo '</ul>';
+	echo '<ul class="tweets">';
+	foreach($tweets as $tweet) {
+		$text = $tweet['text'];
+		
+		$text = preg_replace_callback(
+			"#(^|[\n ])@([^ \"\t\n\r<]*)#is",
+			function($m) { return $m[1].'<a href="https://twitter.com/'.$m[2].'">@'.$m[2].'</a>'; },
+			$text
+		);
+
+		$text = preg_replace_callback(
+			"#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)#is",
+			function($m) { return $m[1].'<a href="'.$m[2].'">'.$m[2].'</a>'; },
+			$text
+		);
+
+		$text = preg_replace_callback(
+			"/([^a-zA-Z0-9-_&])#([0-9a-zA-Z_]+)/",
+			function($m) { return $m[1].'<a href="https://twitter.com/hashtag/'.$m[2].'?src=hash">#'.$m[2].'</a>'; },
+			$text
+						);
+		echo '<li>'.$text.'</li>';
+	}
+	echo '</ul>';
 }
 else
 {
-    echo '<p>' . $tweets . '</p>';  
+	echo '<p>' . $tweets . '</p>';  
 }
 
 
