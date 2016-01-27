@@ -10,11 +10,10 @@
  * @author   Jeffrey Schuette <jeffschuette@me.com>
  * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
  * @link     http://github.com/schuette/twitter-api-php-cache
- * @version  1.0
+ * @version  1.0.1
  */
 
 class Twitter {
-
 
 
 	// Set your Twitter username
@@ -34,7 +33,6 @@ class Twitter {
 	private $oauth_access_token_secret = "YOUR_OAUTH_ACCESS_TOKEN_SECRET";
 	private $consumer_key = "YOUR_CONSUMER_KEY";
 	private $consumer_secret = "YOUR_CONSUMER_SECRET";
-
 
 
 
@@ -88,12 +86,10 @@ class Twitter {
 		}
 
 		// Return the cache file
-		return $this->readCache($cache_file);
-
+		return $this->readCache($cache_file, $this->screen_name);
 	}
 
-	private function readCache($cache_file = FALSE)
-	{
+	private function readCache($cache_file = FALSE) {
 
 		$twitter_data = json_decode(file_get_contents($cache_file));
 		foreach ($twitter_data as $tweet)
@@ -103,7 +99,8 @@ class Twitter {
 				$tweets_array[] = array(
 					'created' => (string)$tweet->created_at,
 					'text' => (string)$tweet->text,
-					'id' => (string)$tweet->id
+					'id' => (string)$tweet->id,
+					'link' => (string)'https://twitter.com/'.$screen_name.'/status/'.$tweet->id
 				);
 			}
 		}
@@ -113,8 +110,8 @@ class Twitter {
 
 	}
 
-	private function storeCache($json = FALSE, $cache_file = FALSE, $screen_name = FALSE)
-	{
+	private function storeCache($json = FALSE, $cache_file = FALSE, $screen_name = FALSE) {
+
 		// Does cache folder exist?
 		if(is_dir($this->cache_folder))
 		{
@@ -133,10 +130,8 @@ class Twitter {
 
 	}
 
+	private function buildBaseString($baseURI, $method, $params) {
 
-
-	private function buildBaseString($baseURI, $method, $params)
-	{
 		$r = array();
 		ksort($params);
 		foreach($params as $key=>$value){
@@ -146,8 +141,7 @@ class Twitter {
 		return $method."&" . rawurlencode($baseURI) . '&' . rawurlencode(implode('&', $r));
 	}
 
-	private function buildAuthorizationHeader($oauth)
-	{
+	private function buildAuthorizationHeader($oauth) {
 		$r = 'Authorization: OAuth ';
 		$values = array();
 		foreach($oauth as $key=>$value)
@@ -156,9 +150,6 @@ class Twitter {
 		$r .= implode(', ', $values);
 		return $r;
 	}
-
-
-
 
 }
 
