@@ -89,7 +89,7 @@ class Twitter {
 		return $this->readCache($cache_file, $this->screen_name);
 	}
 
-	private function readCache($cache_file = FALSE) {
+	private function readCache($cache_file = FALSE, $screen_name = FALSE) {
 
 		$twitter_data = json_decode(file_get_contents($cache_file));
 		foreach ($twitter_data as $tweet)
