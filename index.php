@@ -77,23 +77,34 @@ if(is_array($tweets))
 	foreach($tweets as $tweet) {
 		$text = $tweet['text'];
 		
+		// twitter handle
 		$text = preg_replace_callback(
-			"#(^|[\n ])@([^ \"\t\n\r<]*)#is",
+			"~(?is)(^|[\n ])@([^ \"\t\n\r<]*)~",
 			function($m) { return $m[1].'<a href="https://twitter.com/'.$m[2].'">@'.$m[2].'</a>'; },
 			$text
 		);
 
+		// urls
 		$text = preg_replace_callback(
-			"#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)#is",
+			"~(?is)(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)~is",
 			function($m) { return $m[1].'<a href="'.$m[2].'">'.$m[2].'</a>'; },
 			$text
 		);
 
+		// hashtag
 		$text = preg_replace_callback(
-			"/([^a-zA-Z0-9-_&])#([0-9a-zA-Z_]+)/",
+			"~([^a-zA-Z0-9-_&])#([0-9a-zA-Z_]+)~",
 			function($m) { return $m[1].'<a href="https://twitter.com/hashtag/'.$m[2].'?src=hash">#'.$m[2].'</a>'; },
 			$text
-						);
+		);
+
+		// cashtag
+		$text = preg_replace_callback(
+			"~([^a-zA-Z0-9-_&])\\$([a-zA-Z]{2,4})~",
+			function($m) { return $m[1].'<a href="https://twitter.com/search?q=%24'.$m[2].'&src=ctag">$'.$m[2].'</a>'; },
+			$text
+		);
+
 		echo '<li>'.$text.'</li>';
 	}
 	echo '</ul>';
