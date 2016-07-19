@@ -84,6 +84,13 @@ if(is_array($tweets))
 			$text
 		);
 
+		// twitter handle after dot
+		$text = preg_replace_callback(
+			"~(?is)(^|[\n ]).@([^ \"\t\n\r<]*)~",
+			function($m) { return $m[1].'.<a href="https://twitter.com/'.$m[2].'">@'.$m[2].'</a>'; },
+			$text
+		);
+
 		// urls
 		$text = preg_replace_callback(
 			"~(?is)(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)~is",
