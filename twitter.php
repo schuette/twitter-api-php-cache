@@ -10,7 +10,7 @@
  * @author   Jeffrey Schuette <jeffschuette@me.com>
  * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
  * @link     http://github.com/schuette/twitter-api-php-cache
- * @version  1.0.1
+ * @version  1.0.2
  */
 
 class Twitter {
@@ -62,15 +62,9 @@ class Twitter {
 		$header = array($this->buildAuthorizationHeader($oauth), 'Expect:');
 		$options = array( CURLOPT_HTTPHEADER => $header,
 			CURLOPT_HEADER => false,
-			CURLOPT_URL => $url .'?screen_name='.$this->screen_name.'&count='.$this->tweet_count,
+			CURLOPT_URL => $url .'?screen_name='.$this->screen_name.'&count='.$this->tweet_count.'&exclude_replies=true',
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_SSL_VERIFYPEER => false);
-
-		$feed = curl_init();
-		curl_setopt_array($feed, $options);
-		$json = curl_exec($feed);
-		curl_close($feed);
-
 
 		// Find the document root
 		$doc_root = $_SERVER['DOCUMENT_ROOT'];
@@ -82,6 +76,11 @@ class Twitter {
 
 		// Check if cache file doesn't exist or needs to be updated
 		if(!is_file($cache_file) || (date("U")-date("U", filemtime($cache_file))) > $this->cache_expiration) {
+			$feed = curl_init();
+			curl_setopt_array($feed, $options);
+			$json = curl_exec($feed);
+			curl_close($feed);
+					
 			if(is_string($value = $this->storeCache($json, $cache_file, $this->screen_name))) return $value;
 		}
 
@@ -92,10 +91,12 @@ class Twitter {
 	private function readCache($cache_file = FALSE, $screen_name = FALSE) {
 
 		$twitter_data = json_decode(file_get_contents($cache_file));
-		foreach ($twitter_data as $tweet)
-		{
-			if (!empty($tweet))
-			{
+
+		// handle Twitter rate limit error
+		if (isset($twitter_data->errors)) return '';
+
+		foreach ($twitter_data as $tweet) {
+			if (!empty($tweet)) {
 				$tweets_array[] = array(
 					'created' => (string)$tweet->created_at,
 					'text' => (string)$tweet->text,
@@ -113,11 +114,10 @@ class Twitter {
 	private function storeCache($json = FALSE, $cache_file = FALSE, $screen_name = FALSE) {
 
 		// Does cache folder exist?
-		if(is_dir($this->cache_folder))
-		{
+		if (is_dir($this->cache_folder)) {
+
 			// Is the directory writable?
-			if(is_writable($this->cache_folder))
-			{
+			if (is_writable($this->cache_folder)) {
 				$twitter_data = json_decode($json);
 				file_put_contents($cache_file,json_encode($twitter_data));
 				return TRUE;
@@ -134,7 +134,7 @@ class Twitter {
 
 		$r = array();
 		ksort($params);
-		foreach($params as $key=>$value){
+		foreach($params as $key=>$value) {
 			$r[] = "$key=" . rawurlencode($value);
 		}
 
